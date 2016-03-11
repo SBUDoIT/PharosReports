@@ -62,7 +62,7 @@ var defaultSettings = {
 	},
 	size: {
 		canvasHeight: 700,
-		canvasWidth: 700,
+		canvasWidth: 850,
 		pieInnerRadius: "0%",
 		pieOuterRadius: null
 	},
@@ -430,12 +430,22 @@ var helpers = {
 		var totalSize;
 		if (smallSegmentGrouping.valueType === "percentage") {
 			totalSize = math.getTotalPieSize(data);
+
 		}
 
 		// loop through each data item
 		var newData = [];
 		var groupedData = [];
 		var totalGroupedData = 0;
+			// 
+			/*
+			console.log("ASDLFKJSDAF")
+			console.log(pie.options.total)
+			if (pie.options.total != undefined){
+				console.log("newtotal :D")
+				totalGroupedData = pie.options.total
+			}else{
+				*/
 		for (var i=0; i<data.length; i++) {
 			if (smallSegmentGrouping.valueType === "percentage") {
 				var dataPercent = (data[i].value / totalSize) * 100;
@@ -455,6 +465,7 @@ var helpers = {
 				data[i].isGrouped = false;
 				newData.push(data[i]);
 			}
+			//}
 		}
 
 		// we're done! See if there's any small segment groups to add
@@ -822,7 +833,7 @@ var labels = {
 				.attr("class", pie.cssPrefix + "segmentPercentage-" + section)
 				.attr('transform', function(d,i){
 					if (include.value){
-						return 'translate(' + 70 + ')';
+						return 'translate(' + -10 + ')';
 					}
 				})
 				.text(function(d, i) {
@@ -860,7 +871,7 @@ var labels = {
 				.attr("class", pie.cssPrefix + "segmentValue-" + section)
 				.attr('transform', function(d,i){
 					if (include.percentage){
-						return 'translate(' + -0 + ')';
+						return 'translate(' + '35,0'+ ')';
 					}
 				})
 				.text(function(d, i) {
@@ -880,13 +891,19 @@ var labels = {
 		console.log(percenthidden!= null && include.mainLabel)
 
 		if (include.mainLabel){
-			console.log("zum")
 			labelGroup.append("text")
 				.attr("id", function(d, i) { return pie.cssPrefix + "segmentMainLabel" + i + "-" + section; })
 				.attr("class", pie.cssPrefix + "segmentMainLabel-" + section)
 				.text(function(d, i) {
 					// HELLO WORLD
+
 					var str = d.label
+					
+					var percentage = segments.getPercentage(pie, i, pie.options.labels.percentage.decimalPlaces);
+					if (percentage <= pie.options.labels.inner.hideWhenLessThanPercentage){
+					console.log("hi?")
+						str += " [" + d.value + ", "+ percentage + "%]"
+					}
 					
 
 		          // if a custom formatter has been defined, pass it the raw label string - it can do whatever it wants with it.
@@ -906,36 +923,6 @@ var labels = {
 			.style("font-family", settings.mainLabel.font)
 			.style("font-weight", settings.mainLabel.fontweight)
 			.style("fill", settings.mainLabel.color);
-		}else{
-
-			if ( percenthidden != null) {
-				
-				console.log(percenthidden)
-
-					labelGroup.append("text")
-					.attr("id", function(d, i) { return pie.cssPrefix + "segmentMainLabel" + i + "-" + section; })
-					.attr("class", pie.cssPrefix + "segmentMainLabel-" + section)
-					.text(function(d, i) {
-						// HELLO WORLD
-						var str = d.label + " " + percenthidden.value + " " + percenthidden.percentage;
-			          // if a custom formatter has been defined, pass it the raw label string - it can do whatever it wants with it.
-			          // we only apply truncation if it's not defined
-								if (settings.formatter) {
-			            formatterContext.index = i;
-			            formatterContext.part = 'mainLabel';
-			            formatterContext.value = d.value;
-			            formatterContext.label = str;
-			            str = settings.formatter(formatterContext);
-			          } else if (settings.truncation.enabled && d.label.length > settings.truncation.truncateLength) {
-			            str = d.label.substring(0, settings.truncation.truncateLength) + "...";
-			          }
-	          		return str;
-				})
-				.style("font-size", settings.mainLabel.fontSize + "px")
-				.style("font-family", settings.mainLabel.font)
-				.style("font-weight", settings.mainLabel.fontweight)
-				.style("fill", settings.mainLabel.color);
-			}
 		}
 	},
 

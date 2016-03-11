@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<title>
+Printing Job Reports
+</title>
+<style>
+
+.arc text {
+  font: 20px sans-serif;
+  text-anchor: middle;
+}
+
+.arc path {
+  stroke: #fff;
+}
+
+text.percent{
+  font-size:1.3em;
+  font-weight:bold;
+  color:red;
+}
+text.value{
+   font-size:1.1em;
+}
+text.text{
+   font-size:1.4em;
+   font-weight:bolder;
+
+}
+</style>
+<script src="../js/d3.min.js"></script>
+<script src="../js/d3pie.js"></script>
+</head>
+<body>
+
+<div id="piez"></div>
+
+</body>
+<script>
+
+
+var light = ["FB6C73", "C4000E", "5ACF5A", "45A0A0", "7D56B3", "5F5FB8", "910000", "079107", "0D0D65"]
+var dark = ["9100", "079107", "2d-762", "0D0D65"]
+
+var flat = ["c0392b", "8e44ad", "f39c12", "1abc9c", "d35400", "2980b9", "e74c3c", "2c3e50", "2ecc71", "f1c40f", "ecf0f1", "16a085", "7f8c8d"]
+var d3piecharts = function (data, title){
+  var myPie = new d3pie("piez",data);
+}
+/*
+values = [
+{label: "Used All", value:73},
+{label: "$0.01 - $10.50", value:220, color: "#FB6C73"},
+{label: "$10.50 - $21.00", value:208, color: "#1abc9c"},
+{label: "$21.00 - $31.50", value:312, color: "#e74c3c"},
+{label: "$31.50 - $42.00", value:503, color: "#910000"},
+{label: "$42.00 - $52.50", value:816, color: "#0D0D65"},
+{label: "$52.50 - $63.00", value:1229, color: "#f1c40f"},
+{label: "$63.00 - $73.50", value:1914, color: "#079107"},
+{label: "$73.50 - $84.00", value:3202, color: "#c0392b"},
+{label: "$84.00 - $94.50", value:5551, color: "0D0D65"},
+{label: "$94.50 - $105.00", value:5343, color: "#8e44ad"},
+{label: "Used None", value:5923},
+]*/
+
+// POPULATION DENSITY GRAPH
+values = [
+  {label: "Faculty", value:18096, color: "#FB6C73"},
+  {label: "Commuters", value:15542, color: "#13B091"},
+  {label: "Residents", value:9764, color: "#8e44ad"},
+]
+
+chartinfo={
+    header: {
+      title: {
+        text: "Population Density"
+      }
+    },
+    data:{
+    sortOrder: "none",
+    content: values,
+  }
+}
+
+d3piecharts(chartinfo, "")
+
+
+// USAGE By Pages GRAPH
+values = [
+  {label: "Residents", value:5185352, color: "#FB6C73"},
+  {label: "Commuters", value:4301117, color: "#13B091"},
+  {label: "Faculty", value:172173, color: "#8e44ad"},
+]
+chartinfo={
+    header: {
+      title: {
+        text: "Usage By Pages"
+      }
+    },
+    data:{
+    sortOrder: "none",
+    content: values,
+  }
+}
+d3piecharts(chartinfo, "")
+
+
+values = [
+{label: "Commuters", value:3416782},
+{label: "Residents", value:2894078, color: "#FB6C73"},
+{label: "Faculty/Staff", value:117717, color: "#1abc9c"},
+//{label: "Other", value:161, color: "#e74c3c"},
+//{label: "SINC Consults", value:112, color: "#910000"},
+//{label: "Resident Consults", value:36, color: "#0D0D65"},
+
+]
+chartinfo={
+  header: {
+    title: {
+      text: "Usage By Sheets"
+    }
+  },
+  data:{
+    //.total: 9929976,
+  sortOrder: "none",
+  content: values,
+  }
+}
+d3piecharts(chartinfo, "")
+
+
+
+
+</script>
+
+<!-- https://bl.ocks.org/mbostock/3887235 --> 
