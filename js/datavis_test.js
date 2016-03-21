@@ -12,32 +12,22 @@ var fontsize = 20
 
 // from 6 - 30 missing a couple numbers from 19-30 so look at the chart before setting font size
 var fontconverter = {6:8, 7:9, 8:11, 9:12, 10:13, 11:15, 12:16, 13:18, 14:19, 15:21, 16:22, 17:23, 18:24, 19 : 25, 20:26, 22:29, 24:32, 26:35, 27:36, 29:38, 30:40 }
- 
-/*
-    titles = ["Coffee", "Bubble Tea", "Water", "Milk"]
-    data = [1200, 90, 100, 40]
-*/
-
 
 // pie chart creator
 var d3piecharts = function (data, id_key){
   var myPie = new d3pie(id_key,data);
 }
 
-
-
 // Static with pure Canvas- No animation
-// id should have hashtage appended to it? // Static with pure Canvas- No animation
 // id should have hashtage appended to it? 
-var makeHorizontalBars = function (array,topTitle, id) {
+var makeHorizontalBars = function (array, id) {
     // get data
     // this is HARDCODED dummy data: 
     // THIS SHOULD BE REMOVED WHEN THE DATA STRUCTURE OF THE INPUT IS FINALIZED
     if (array == 1)
         array = {"Title":"Reservations By Status","Items":[{"Key":"??","Value":53703},{"Key":"Reserved for y Clients... YUMM","Value":5297},{"Key":"Cancelled","Value":3287},{"Key":"Blocked","Value":32},{"Key":"","Value":28}]}
     var data = array["Items"]
-    if (topTitle == 1)
-         topTitle = array["Title"]
+    var topTitle = array["Title"]
     var n = data.length
 
     
@@ -59,6 +49,7 @@ var makeHorizontalBars = function (array,topTitle, id) {
 
   
     id = "#" + id
+    
     $(id)[0].width = 1000
     $(id)[0].height = canvas.height
     
@@ -159,7 +150,7 @@ var makeHorizontalBars = function (array,topTitle, id) {
     container.appendChild(newGraph);
 }
 var percent = function (n, total) {
-    var percent = Math.round(n / total * 1000)/100;
+    var percent = Math.round(n / total * 10000)/100;
     return percent + "%"
 }
 
