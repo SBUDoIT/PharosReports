@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link rel="icon" href="@Url.Content("~/Content/themes/unity/.dist/assets/images/favicons/favicon.ico")"/>
+
+    <link href="@Url.Content("~/Content/themes/unity/.dist/css/style.css")" rel="stylesheet" type="text/css" />
+    <!--
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
+
+        -->
+
+   <script src="/Content/themes/site/js/d3.min.js"></script>
+    <script src="/Content/themes/site/js/d3pie.js"></script>
+    <script src="/Content/themes/site/js/data-viz.js"></script>
+
+    </head>
+<body>
+
+<div class="logo-container">
+    <div class="container">
+                    
+        <div class="logo-wrapper clearfix">
+            <div class="logo">
+                <a href="http://www.stonybrook.edu/"><img src="@Url.Content("~/Content/themes/unity/images/stony-brook-university-logo.jpg")" alt="Stony Brook University" width="357" height="68"></a>
+            </div>
+            <h1 class="site-name"><a href="/">Pharos Reports</a> </h1>
+            <!--a style="font-sizehref="/">@ViewBag.Title</a-->
+        </div>
+        <div id="logindisplay" style="text-align:right;margin-right:10px;">
+                <!--@Html.Partial("_LogOnPartial")-->
+        </div>    
+    </div>
+</div>
+<div class="main-site-nav-wrap">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="main-site-nav"><span class="main-nav-trigger" role="button" aria-label="Toggle main navigation" tabindex="0"><em class="sbuicon-menu7"></em></span>
+            <ul class="hide-accessible-mobile-960">
+                <li><a href="/">Home</a></li>
+
+            </ul>
+        </div>
+    </div> 
+</div>
+   
+
+
+
+            @RenderBody()
+
+    <footer class="site-footer clearfix">
+                <div class="top-footer centered"style="padding:4em 0">
+                <div class="container">
+                    <div class="row">
+                        <nav class="wrapper">
+                            <div class="col col-md-4 footer-links" data-match-height="items-footer" style="height: 128px;">
+                            </div>
+                            <div class="col col-md-4 tight social" data-match-height="items-footer">
+                               <h2 class="white">Connect with <a style="color:white" href="http://it.stonybrook.edu/"><strong>SBUDoIT</strong></a></h2>
+                                <h5>#sbudoit</h5>
+                                <div class="social-links">
+                                    <a class="bg-facebook" href="https://www.facebook.com/sbudoit" title="DoIT Facebook" target="_blank"><em class="sbuicon-facebook4"></em></a>
+                                    <a class="bg-twitter" href="https://twitter.com/sbudoit" title="DoIT Twitter" target="_blank"><em class="sbuicon-twitter4"></em></a>
+                                    <a class="bg-youtube" href="http://www.youtube.com/channel/UCbOzIblxmg-Ing9NSEms8Tw" title="DoIT YouTube" target="_blank"><em class="sbuicon-youtube3"></em></a>
+                                    <a class="bg-google-plus" href="https://plus.google.com/u/0/102779299295288343882/posts" title="DoIT Google+" target="_blank"><em class="sbuicon-google-plus"></em></a>
+                                    <a class="bg-tumblr" href="http://sbudoit.tumblr.com/" title="DoIT Tumblr" target="_blank"><em class="sbuicon-tumblr3"></em></a>
+                                    <a class="bg-dark-gray" href="http://www.flickr.com/photos/101383158@N02/" title="DoIT Flickr" target="_blank"><em class="sbuicon-flickr2"></em></a>
+                                    <a class="bg-instagram" href="http://instagram.com/sbudoit" title="DoIT Instagram" target="_blank"><em class="sbuicon-instagram"></em></a>
+                                    <a class="bg-yammer" href="https://www.yammer.com/stonybrook.edu/" title="DoIT Yammer" target="_blank"><em class="sbuicon-yammer"></em></a>
+                                    <a class="bg-red" href="https://github.com/sbudoit" title="SBUDoIT GitHub" target="_blank"><em class="sbuicon-git"></em></a>
+                                </div>
+                            </div>
+                            <div class="col col-md-4" data-match-height="items-footer" style="height: 128px;">
+                                
+                                
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="row cozy"></div>
+                    <div class="col-sm-12">
+		                <div id="bottom-footer">
+			                <p class="centered">
+					                Copyright © 2016 Stony Brook University     	
+			                </p>
+			                <div id="block-block-3" class="block block-block">
+				                <div class="content">
+					                <p style="text-align: center;">Phone: (631) 632-9800 </p>  
+			                    </div>
+			                </div>       
+		                </div>
+	                </div>
+                </div>
+                    </div>
+                    
+
+</footer>
+
+</body>
+</html>

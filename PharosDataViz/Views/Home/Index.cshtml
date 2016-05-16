@@ -1,0 +1,571 @@
+﻿@{
+    ViewBag.Title = "Pharos Report";
+}
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        
+
+        
+
+            
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
+   <script src="/Content/themes/site/js/d3.min.js"></script>
+    <script src="/Content/themes/site/js/d3pie.js"></script>
+    <script src="/Content/themes/site/js/data-viz.js"></script>
+
+    <style>
+
+        .date-pickers {
+    display: table-row-group;
+}
+.date-picker {
+    display: table-row;
+}
+.date-picker LABEL {
+    width: 60px;
+    text-align: right;
+}
+.date-picker LABEL, .date-picker INPUT {
+    display: table-cell;
+}
+.date-picker INPUT[type='text'] {
+    border-radius: 4px;
+    padding: 2px;
+    border: inset 1px rgba(180, 180, 180, .5);
+}
+.date-picker INPUT[type='text']:HOVER {
+    background-color: rgba(180, 180, 240, .6);
+    cursor: pointer;
+}
+
+#ui-datepicker-div
+{
+    width: 300px;
+    left:0;
+    position:absolute;
+}
+        h2 {
+            text-align:center;
+        }
+        h4 {
+        font-weight:bold;
+        }
+
+/* Overwrite standard table attributes for smaller fit on the page*/
+.table {
+    width:80%;
+    margin:0 auto;
+}
+ul.list, ul.list li {
+   margin-left:10px;
+   list-style:disc;
+   list-style-type:disc;
+   padding:2px;
+}
+    </style>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            //Wire up the JQuery UI date pickers
+            $("#fromDate").datepicker({
+                dateFormat: 'mm-dd-yy',
+
+                onSelect: function (dateSelected, obj) {
+                    $(document).trigger("date-clicked", {
+                        date: dateSelected,
+                        source: this
+                    });
+                }
+            });
+            $("#toDate").datepicker({
+                dateFormat: 'mm-dd-yy',
+
+                onSelect: function (dateSelected, obj) {
+                    $(document).trigger("date-clicked", {
+                        date: dateSelected,
+                        source: this
+                    });
+                }
+            });
+
+
+            $("#userfromDate").datepicker({
+                dateFormat: 'mm-dd-yy',
+
+                onSelect: function (dateSelected, obj) {
+                    $(document).trigger("date-clicked", {
+                        date: dateSelected,
+                        source: this
+                    });
+                }
+            });
+            $("#usertoDate").datepicker({
+                dateFormat: 'mm-dd-yy',
+
+                onSelect: function (dateSelected, obj) {
+                    $(document).trigger("date-clicked", {
+                        date: dateSelected,
+                        source: this
+                    });
+                }
+            });
+           
+
+            //Get a custom binding event ready
+            $(document).bind("date-clicked", function (e, data) {
+                
+                var x = $(".rawlink")
+                for (var i = 0; i < x.length; i++){
+                    var prefix_url = x[i].href.split("?")[0]
+                    x[i].href = prefix_url + GetFilterQueryString()
+    
+                }
+                getData("transactions_by_date", $("#transactions-select").val(), "TransactionsByDate.ashx" + GetFilterQueryString())
+                getData("standard_count", $("#standard_count-select").val(), "Standard_Info_Count.ashx" + GetFilterQueryString())
+                getData("user_distribution", $("#user_distr-select").val(), "Users.ashx" + GetUserFilterQueryString(), "User Type", "#")
+                
+            });
+        });
+
+
+
+</script>
+<script>
+
+    function GetFilterQueryString() {
+        var sRetVal = "";
+        //var startDate = $("#fromDate").datepicker({ dateFormat: "mm-dd-yy" }).val();
+        var startDate = $("#fromDate").val();
+        //var endDate = $("#toDate").datepicker({ dateFormat: "mm-dd-yy" }).val();
+        var endDate = $("#toDate").val();
+
+        if (startDate != null && endDate != null && startDate != "" && endDate != "")
+            sRetVal = "?StartDate=" + startDate + "&EndDate=" + endDate;
+        return sRetVal + "&" + GetUserFilterQueryString().substring(1);
+    }
+    function GetUserFilterQueryString() {
+        var sRetVal = "";
+        //var startDate = $("#fromDate").datepicker({ dateFormat: "mm-dd-yy" }).val();
+        var startDate = $("#userfromDate").val();
+        //var endDate = $("#toDate").datepicker({ dateFormat: "mm-dd-yy" }).val();
+        var endDate = $("#usertoDate").val();
+        var quota = $("#userquota").val();
+
+        if (quota == undefined || quota == "" || parseFloat(quota) <= 0){
+            return "";
+        }else{
+            if (startDate != null && endDate != null && startDate != "" && endDate != "")
+                sRetVal = "?uStartDate=" + startDate + "&uEndDate=" + endDate + "&Quota=" +quota;
+        }
+        return sRetVal;
+    }
+
+
+    function updateUrlwithFilter(link_class, prefix_url) {
+        $("." + link_class).attr("href", prefix_url + GetFilterQueryString());
+        //console.log($("." + link_class).find("a"));
+    }
+    function capFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // fix up this function for any graph
+    function getData(graph_id, graph_type, json_url, key="Key", user="User") {
+       
+        $.ajax({
+            type: 'POST',
+            data: '{}',
+            url: "/admin/json/"+json_url,
+            dataType: "json",
+            contentType: 'application/json',
+
+            async: false,
+            success:
+            function (response) {
+
+                //                updateUrlwithFilter("chart_reason", "/admin/json/ReservationsByReason.ashx");
+
+
+                //drawPie(response, "chart_reason");
+
+                clearcharts(graph_id)
+
+                switch (graph_type) {
+                    case "Bar":
+                        console.log(response);
+                        makeHorizontalBars(response, graph_id, [], 1000, 400);
+                        break;
+                    case "Pie":
+                        chartinfo = {
+                            header: {
+                                title: {
+                                    text: response["Title"]
+                                }
+                            }, size: {
+                                canvasHeight: 600,
+                                canvasWidth: 1000,
+                                pieInnerRadius: "25%",
+                                //pieOuterRadius: "70%"
+                            },
+                            data: {
+                                sortOrder: "none",
+                                content: []
+                            }
+                        }
+                        chartinfo=pie_data_format(chartinfo, response["Items"])
+                        console.log(chartinfo);
+                        d3piecharts(chartinfo, graph_id)
+                        break;
+                    case "Table":
+                        console.log(graph_id);
+                        tablefy(response["Items"], graph_id, key, user);
+                        break;
+                    case "google-pie":
+                       // drawPie(response, graph_id);
+                        break
+                    case "Scatter":
+                    case "Line":
+                        updateUrlwithFilter("chart_byday", "/admin/json/ReservationsByDay.ashx");
+                        clearcharts("day")
+                        chartinfo = {
+                        }
+                        graph_type = graph_type == undefined ? "Line" : graph_type
+                        alldata = [response]
+                        chartinfo = {}
+
+                        var items = response["Items"]
+
+
+                        // do date comparision to get correct tick dictionary
+                       
+                        var datedifference = Math.abs(new Date(items[0]["Key"]) - new Date(items[items.length - 1]["Key"])); // this is in milliseconds
+                        // divide by 1000, 60, 60, 24 to get number of days difference by days
+                        datedifference = datedifference / 86400000
+                         
+                        // set tick marks according to time interval
+                        ticksInfo = {
+                            date_by: "year", //, "month", "day"
+                            num_by: 1,
+                            label: "%Y "
+                        }
+                        if (datedifference < 100) { // within 3 months
+                            ticksInfo = {
+                                date_by: "day",
+                                num_by: 11, // not every 11 days, to avoid clashing with first day of next month.. 
+                                label: "%m/%d/%Y "
+                            }
+                            if (datedifference < 15) { // within half a month
+                                ticksInfo.num_by = 3
+                            }
+                            else if (datedifference < 30) { // within a month
+                                ticksInfo.num_by = 5
+                            }
+                        }
+                        else if (datedifference < 900) { // within than 2.5 years 
+                            ticksInfo = {
+                                date_by: "month",
+                                num_by: 3,
+                                label: "%m/%Y "
+                            }
+                            if (datedifference < 360) { // within a year
+                                ticksInfo.num_by = 1
+                            }
+                        }
+
+
+                        switch (graph_type) {
+                            case "Scatter":
+                                chartinfo = {
+                                    header: {
+                                        title: {
+                                            text: response["Title"]
+                                        },
+
+                                        id: graph_id + "_" + graph_type//"reason"+" // graph id, if you have multiple graphs, make sure you have this param
+                                    },
+                                    size: /*sizeinfo == undefined ?*/ {
+                                        width: 1100,
+                                        height: 300,
+                                    }, //: sizeinfo,
+                                    margin: /*margininfo == undefined ?*/ {
+                                        top: 100,
+                                        right: 100,
+                                        bottom: 130,
+                                        left:100
+                                    }, //: margininfo,
+                                    data: {
+                                        // content and colors correspond data in dictionary at index 1 will be colored in the color at index 1 <- if data exceeds colors, colors will loop via modular arithmetic
+                                        content: alldata,
+                                        colors: [["pink", "orange", "blue"], ["blue", "pink", "orange"]], //dotcolor, linecolor
+                                        point_size: 3, // point size, BY RADIUS
+                                        //line_size: 2, // line thickness
+                                        // default line thinkness is 2
+                                        graph_tick: ticksInfo,
+                                        axis_labels: {
+                                            x: "Year",
+                                            y: "Transactions By Date"
+                                        }
+                                    }
+                                }
+                                chartinfo.data.axis_labels.x = capFirstLetter(chartinfo.data.graph_tick.date_by)
+                                scatterplot(chartinfo, graph_id)
+                                break;
+                            case "Line":
+                                chartinfo = {
+                                    header: {
+                                        title: {
+                                            text: response["Title"]
+                                        },
+                                        id: graph_id + "_" + graph_type//"reason"+" // graph id, if you have multiple graphs, make sure you have this param
+                                    },
+                                    size: /*sizeinfo == undefined ?*/ {
+                                        width: 1100,
+                                        height: 300,
+                                    }, //: sizeinfo,
+                                    margin: /*margininfo == undefined ?*/ {
+                                        top: 100,
+                                        right: 100,
+                                        bottom: 130,
+                                        left: 100
+                                    },// : margininfo,
+                                    data: {
+                                        // content and colors correspond data in dictionary at index 1 will be colored in the color at index 1 <- if data exceeds colors, colors will loop via modular arithmetic
+                                        content: alldata,
+                                        colors: [["blue", "orange", "blue"], ["blue", "pink", "orange"]], //dotcolor, linecolor
+                                        point_size: 2, // point size, BY RADIUS
+                                        line_size: 2, // line thickness
+                                        // default line thinkness is 2
+                                        graph_tick: ticksInfo,
+                                        axis_labels: {
+                                            x: "Year",
+                                            y: "Transactions By Date"
+                                        }
+                                    }
+                                }
+                                chartinfo.data.axis_labels.x = capFirstLetter(chartinfo.data.graph_tick.date_by)
+                                linegraph(chartinfo, graph_id)
+                                break;
+                        }
+                        break;
+                    default:
+                        makeHorizontalBars(response, graph_id, [], 1000, 400);
+                }
+            }
+        });
+    }
+    function clearcharts(div_id) {
+        // console.log("#" + div_id);
+        $("#" + div_id).empty();
+        // console.log("#" + div_id);
+    }
+
+
+
+</script>
+
+
+<section class="cozy bg-texture-egg-shell bg-light-gray">
+    <div class="main-content-wrap">
+
+     <div class="row ">
+        <div class="col-md-12">
+                <h2 class="section-header">
+                Pharos Reports
+                </h2>
+            <div class="col-md-8" style="margin:0 auto;margin-left:16.666667%; font-weight:bold; font-family:sans-serif">
+           
+ Before looking at the rendered graphs and tables:
+<ul class="list" >
+<li>Choose the dates of which active users are given a certain quota (Note this is an estimate due to the unreliability of how to determine active users in the system for a particular semester) </li>
+<li>Choose your desired transaction period in order to generate graphs and tables of different statistical data about print usage. </li>
+</ul>
+** There may be a delay in rendering the page. If your time period is too big, there will be a substantial delay due to the vast amount of transactions in the system. **
+            </div>
+        </div>
+    </div>
+     </div>
+    </section>
+
+
+<section class="cozy bg-texture-hexellence bg-white">
+    <div class="container">
+        <h1 style="text-align:center;text-decoration:underline">Parameters</h1>
+           
+     <div class="row">
+     <div class="col-sm-4 intro-text" >
+          <div class="table_of_contents" >
+              <h4> Table of Contents</h4>
+                <ul style="text-align:left">
+                    <li> <a href="#user_title"> User Distributions</a></li>
+                    <li><a href="#transaction_title">Transactions By Date</a></li>
+                    <li><a href="#printingtype_title"> Simplex versus Duplex</a></li>
+                </ul>
+                </div>
+
+        </div>
+        <div class="col-md-4">
+             <h4>Choose User Dates</h4>
+               <div class="date-pickers">
+                    <div class="date-picker">
+                    <label for="fromDate">From:</label>
+                    <input type="text" name="fromDate" id="userfromDate" value="08-16-2015" class="date-field" />
+                </div>
+                <div class="date-picker">
+                  <label for="usertoDate">To:</label>
+                  <input type="text" name="toDate" id="usertoDate" value="09-04-2015" class="date-field" />
+                </div>
+                   
+               </div>
+            <div>
+          
+               </div>
+              <label for="quota">Quota:</label>
+            <input type="number" name="quota" id="userquota" class="date-field" value="105" step="any"/>
+                </div>
+           
+
+             <div class="col-md-4 side-bar">
+                <h4>Choose Transaction Period</h4>
+               <div class="date-pickers">
+                <div class="date-picker">
+                    <label for="fromDate">From:</label>
+                    <input type="text" name="fromDate" id="fromDate" value="08-16-2015" class="date-field" />
+                </div>
+                <div class="date-picker">
+                  <label for="toDate">To:</label>
+                  <input type="text" name="toDate" id="toDate" value="12-16-2015" class="date-field" />
+                </div>
+               </div>
+               </div>
+        
+       </div>
+    <hr />  
+    </div>
+
+</section>
+
+ <section class="cozy bg-white">
+     <div class="container">
+      <div class="main-content-wrap">
+         
+
+
+          <h2 id="user_title"> User Distribution (Acc to user parameters) </h2>
+          <a class="rawlink" id="userlink" href="admin/json/Users.ashx" style="text-align:center;float:left; width:45%"><h4>Users</h4></a>
+           <select id="user_distr-select" class="form-control graphtype_selector" style="float:right; width:45%">
+                       
+                        <option>Bar</option>
+                        <option>Pie</option>
+                         <option>Table</option>
+           </select> 
+            <div id="user_distribution"></div>
+           
+          
+          <h2 id ="standard_count_title">Simplex versus Duplex</h2>
+          <a class="rawlink" id="standard_countlink" href="admin/json/Standard_Info_Count.ashx" style="text-align:center;float:left; width:45%"><h4>PrintCount</h4></a>
+          <select id="standard_count-select" class="form-control graphtype_selector" style="float:right; width:45%">
+                       <option>Table</option>
+                        <option>Bar</option>
+                        <option>Pie</option>
+                         
+           </select> 
+             <div id="standard_count"></div>
+            <br />
+      
+
+
+            <br />
+          
+          <h2 id ="transaction_title"> Transactions By Date </h2>
+          <a class="rawlink" id="transactionlink" href="admin/json/TransactionsByDate.ashx" style="text-align:center;float:left; width:45%"><h4>Transactions By Date</h4></a>
+          <select id="transactions-select" class="form-control graphtype_selector" style="float:right; width:45%">
+
+                        <option>Line</option>
+                        <option>Scatter</option>
+           </select> 
+            <div id="transactions_by_date"></div>
+          
+           <br />
+           
+             <br />
+            
+
+         
+       <script> 
+             
+
+             
+              getData("transactions_by_date",  $("#transactions-select").val(), "TransactionsByDate.ashx" + GetFilterQueryString())
+              getData("standard_count", $("#standard_count-select").val(), "Standard_Info_Count.ashx" + GetFilterQueryString(),"Type", "#")
+              getData("user_distribution", $("#user_distr-select").val(), "Users.ashx" + GetUserFilterQueryString(), "User Type", "#")
+            
+              $("#transactions-select").change (function(){
+                  // CHARTS ARE CLEARED IN THE GET DATA FUNCTION
+                  //getData("transactions_by_date", "Scatter", "TransactionsByDate.ashx" + GetFilterQueryString())
+                  // getData("transactions_by_date2", "Line", "TransactionsByDate.ashx" + GetFilterQueryString())
+                  getData("transactions_by_date", $(this).val(), "TransactionsByDate.ashx" + GetFilterQueryString())
+                  //getData("user_distribution", "Bar", "Users.ashx")
+                  //getData("user_distribution2", "Pie", "Users.ashx")
+                  //getData("user_distribution", $(this).val, "Users.ashx")
+                  var x= document.getElementById("transactionlink");
+                  var prefix_url = x.href.split("?")[0]
+                  x.href = prefix_url + GetFilterQueryString()
+
+              });
+              $("#standard_count-select").change(function(){
+                  // CHARTS ARE CLEARED IN THE GET DATA FUNCTION
+              //    getData("print_count", $(this).val(), "Standard_Info_Count.ashx" + GetFilterQueryString(),"Type", "#")
+                  var x= document.getElementById("standard_countlink");
+                  var prefix_url = x.href.split("?")[0]
+                  x.href = prefix_url + GetFilterQueryString()
+
+              });
+              $("#user_distr-select").change(function(){
+                  // CHARTS ARE CLEARED IN THE GET DATA FUNCTION
+                  getData("user_distribution", $("#user_distr-select").val(), "Users.ashx" + GetUserFilterQueryString(), "User Type", "#")
+                  var x= document.getElementById("userlink");
+                  var prefix_url = x.href.split("?")[0]
+                  x.href = prefix_url + GetUserFilterQueryString()
+              });
+              $("#userquota").change( function(){
+                    
+                  var x = $(".rawlink")
+                  for (var i = 0; i < x.length; i++){
+                      var prefix_url = x[i].href.split("?")[0]
+                      x[i].href = prefix_url + GetFilterQueryString()
+    
+                  }
+                  getData("transactions_by_date", $("#transactions-select").val(), "TransactionsByDate.ashx" + GetFilterQueryString())
+                  getData("standard_count", $("#standard_count-select").val(), "Standard_Info_Count.ashx" + GetFilterQueryString())
+                  getData("user_distribution", $("#user_distr-select").val(), "Users.ashx" + GetUserFilterQueryString(), "User Type", "#")
+              });
+           
+                
+
+              var x = $(".rawlink")
+              for (var i = 0; i < x.length; i++){
+                  var prefix_url = x[i].href.split("?")[0]
+                  x[i].href = prefix_url + GetFilterQueryString()
+    
+              }
+          </script>
+  </div>
+
+    </div>
+    </section>
+
+<!--
+<section class="comfy bg-texture-black-felt bg-alizarin">
+    <div class="container">
+        <h1 style="text-align:center;text-decoration:underline">Instructions on how to use Link Utilities</h1>
+        <div class="row home-instructions">
+        
+        </div>
+    </div>
+</section>
+-->
