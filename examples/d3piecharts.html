@@ -28,19 +28,28 @@ text.text{
    font-weight:bolder;
 
 }
+code { 
+  font: monospace;
+    padding:3px;
+    background: hsl(220, 80%, 90%); 
+}
+
+pre {
+    white-space: pre-wrap;
+    background: hsl(30,80%,90%);
+}
 </style>
-<script src="../js/d3.min.js"></script>
-<script src="../js/d3pie.js"></script> <!-- link to the non-min version... edited js to improve functionality --> 
-<script src="../js/datavis_test.js"></script>
+<script src="d3.min.js"></script>
+<script src="datavis_test.js"></script>
+<script src="d3pie.js"></script> <!-- link to the non-min version... edited js to improve functionality --> 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </head>
 <body>
 
-<div id="piez"></div>
-<h2> Creating Pie Graph </h2>
+<h3> Creating a Pie Chart </h3>
 
 <div class="instructions">
-<strong> Make sure you link the d3 script, d3pie script, and dataviz script:
+<strong> Make sure you link the d3 script and the d3pie script:
   <pre class="prettyprint">
   &lt;script src="d3.min.js"&gt;&lt;/script&gt;
   &lt;script src="d3pie.js"&gt;&lt;/script&gt; 
@@ -51,9 +60,13 @@ text.text{
     title: {
       text: "Place Title Here"
     }
+  },size: {
+    canvasHeight: 700,
+    canvasWidth: 850,
+    pieInnerRadius: "25%",
+    //pieOuterRadius: "20%"
   },
   data:{
-  sortOrder: "none",
   content:  [ { label: "My first label", value:1},
               { label: "My second label", value:2},
               { label: "My third label", value:3},
@@ -64,33 +77,101 @@ text.text{
 }
 }</pre>
 Then to run, call: <code>d3piecharts(chartinfo, "id_for_div_to_contain_graph_without_#")</code> 
+<br>
+If you need to convert Json that looks like the below into the label value format, you can use the function pie_data_format(chartinfo, data, colors=[]) where chartinfo is the basic structure of your piegraph attributes and where your data is d["Items"]. <br>
 
-</div>
+So for example for the below json, you can get the pie chart data structure by calling <code>pie_data_format(chartinfo, d[Items] /*, colors = [some colors] // <- this is an optional parameter */) </code> ;  : 
 
-<div id="sample"></div>
-</body>
-<script>
+<pre class="prettyprint">
+d = {"Title":"My Data",
+      "Items":[ {"Key":"pies","Value":31},
+                {"Key":"cakes","Value":18077},
+                {"Key":"chocolate","Value":25278},
+                {"Key":"candy","Value":3},
+                {"Key":"coffee","Value":101}
+              ]
+    }
 
 chartinfo={
   header: {
     title: {
       text: "Place Title Here"
     }
+  },size: {
+    canvasHeight: 700,
+    canvasWidth: 850,
+  },
+  data:{
+  }
+}
+</pre>
+</div>
+
+<div id="piez">
+</div>
+<div id="sample">
+
+</div>
+</body>
+<script>
+
+
+var light = ["FB6C73", "C4000E", "5ACF5A", "45A0A0", "7D56B3", "5F5FB8", "910000", "079107", "0D0D65"]
+var dark = ["9100", "079107", "2d-762", "0D0D65"]
+
+var flat = ["c0392b", "8e44ad", "f39c12", "1abc9c", "d35400", "2980b9", "e74c3c", "2c3e50", "2ecc71", "f1c40f", "ecf0f1", "16a085", "7f8c8d"]
+var d3piecharts = function (data, id_key){
+  var myPie = new d3pie(id_key,data);
+}
+values = [
+{label: "Used All", value:73},
+{label: "$0.01 - $10.50", value:220, color: "#FB6C73"},
+{label: "$10.50 - $21.00", value:208, color: "#1abc9c"},
+{label: "$21.00 - $31.50", value:312, color: "#e74c3c"},
+{label: "$31.50 - $42.00", value:503, color: "#910000"},
+{label: "$42.00 - $52.50", value:816, color: "#0D0D65"},
+{label: "$52.50 - $63.00", value:1229, color: "#f1c40f"},
+{label: "$63.00 - $73.50", value:1914, color: "#079107"},
+{label: "$73.50 - $84.00", value:3202, color: "#c0392b"},
+{label: "$84.00 - $94.50", value:5551, color: "0D0D65"},
+{label: "$94.50 - $105.00", value:5343, color: "#8e44ad"},
+{label: "Used None", value:5923},
+]
+chartinfo={
+  header: {
+    title: {
+      text: "Pharos Printing Usage Breakdown - Remaining Balances"
+    }
   },
   data:{
   sortOrder: "none",
-  content:  [ { label: "My first label", value:1},
-              { label: "My second label", value:2},
-              { label: "My third label", value:3},
-              { label: "My fourth label", value:4},
-              { label: "My fifth label", value:5},
-              { label: "My sixth label", value:6, color: "#8e44ad"}
-            ]
+  content: values,
 }
 }
-d3piecharts(chartinfo, "sample")
+
+d3piecharts(chartinfo, "piez")
 
 
+
+values = [
+{label: "Commuters", value:1542},
+{label: "Residents", value:9764, color: "#FB6C73"},
+{label: "Faculty/Staff", value:18096, color: "#1abc9c"},
+
+]
+chartinfo={
+  header: {
+    title: {
+      text: "Job Reports - Transactions"
+    }
+  },
+  data:{
+    total: 9929976,
+  sortOrder: "none",
+  content: values,
+  }
+}
+d3piecharts(chartinfo, "piez")
 values = [
 {label: "", value:73},
 {label: "", value:220, color: "#FB6C73"},
@@ -105,6 +186,58 @@ values = [
 {label: "", value:5343, color: "#8e44ad"},
 {label: "", value:5923},
 ]
+
+
+
+
+values = [
+{label: " ", value:53703},
+{label: "Cancelled", value:5298, color: "#FB6C73"},
+{label: "Blocked", value:387, color: "#1abc9c"},
+{label: "Reserved", value:32, color: "#e74c3c"},
+{label: "", value:28, color: "#910000"}
+]
+chartinfo={
+  header: {
+    title: {
+      text: "Job Reports - Transactions"
+    }
+  },
+  data:{
+    total: 9929976,
+  sortOrder: "none",
+  content: values,
+  }
+}
+
+
+
+
+
+// sample code rendered pie
+chartinfo={
+  header: {
+    title: {
+      text: "Place Title Here"
+    }
+  },size: {
+    canvasHeight: 700,
+    canvasWidth: 850,
+    pieInnerRadius: "25%",
+    //pieOuterRadius: "20%"
+  },
+  data:{
+  sortOrder: "none",
+  content:  [ { label: "My first label", value:1},
+              { label: "My second label", value:2},
+              { label: "My third label", value:3},
+              { label: "My fourth label", value:4},
+              { label: "My fifth label", value:5},
+              { label: "My sixth label", value:6, color: "#8e44ad"}
+            ]
+}
+}
+d3piecharts(chartinfo, "sample")
 </script>
 
 <!-- https://bl.ocks.org/mbostock/3887235 --> 

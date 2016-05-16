@@ -18,10 +18,10 @@ The arrayOFData should be formatted as follows: (This may be changed in the near
 <html>
 
 <head>
-	<script src=
-	"https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script src="../js/datavis_test.js"></script>
-	<script src="../js/d3.min.js"></script>
+  <script src=
+  "https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="datavis_test.js"></script>
+  <script src="d3.min.js"></script>
   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <style>
 
@@ -37,9 +37,9 @@ body {
   shape-rendering: crispEdges;
 }
 .axis text{
-	font-size:15px;
-	font-weight:bold;
-	font-family:Verdana;
+  font-size:15px;
+  font-weight:bold;
+  font-family:Verdana;
 }
 .line {
   fill: none;
@@ -71,10 +71,14 @@ body {
 
 <br>
 <h3>JavaScript Function: </h3>
-To run, call: <code>makeHorizontalBars( arrayOfData, idOFelementToAppendChart);</code>
+To run, call: <code>makeHorizontalBars( arrayOfData, idOFelementToAppendChart, colors);</code>
 <br>
 The idOfelementtoAppendchart is the id without # of the element the chart will be appended to. <br>
-The arrayOFData should be formatted as follows: (This may be changed in the near future as this may not be the finalized data structure for the input data).<br>
+The chartinfo should be formatted as follows: (This may be changed in the near future as this may not be the finalized data structure for the input data).<br>
+The colors parameter is an OPTIONAL parameter where you can choose colors you want your bars to have. If this is empty, this default array of colors will be used. (Note the bar colors will loop if there are more bars than colors). :
+<pre class="prettyprint">
+["c0392b", "8e44ad", "f39c12", "1abc9c", "d35400", "2980b9", "e74c3c", "2c3e50", "2ecc71", "f1c40f", "ecf0f1", "16a085", "7f8c8d"]
+</pre>
 #### NOTE: Items Values should be ordered from greatest to least. ####
 <h3>Data Structure for function input</h3>
 
@@ -90,8 +94,8 @@ chartinfo={"Title":"Reservations By Status",
 }
 </pre>
 
-Code Run: 
-<code> makeHorizontalBars( arrayOfData, idOFelementToAppendChart); </code>
+Run Code: 
+<code> makeHorizontalBars( chartinfo, idOFelementToAppendChart, colors); </code>
 </div>
 
 
